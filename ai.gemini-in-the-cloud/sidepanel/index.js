@@ -10,7 +10,7 @@ import { GoogleGenAI } from '../node_modules/@google/genai/dist/index.mjs';
 //
 // It is only OK to put your API key into this file if you're the only
 // user of your extension or for testing.
-const apiKey = 'AIzaSyCxNMXTDWbPolWkBemKa7itmjDNW8uvvjI';
+const apiKey = 'YOUR_API_KEY_HERE';
 
 let genAI = null;
 let generationConfig = {
