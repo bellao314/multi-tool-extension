@@ -11,9 +11,9 @@
     0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 
   appearance: none;
-  width: min(100%, 320px);
-  min-height: 220px;
-  padding: 24px;
+  width: 250px;
+  min-height: 200px;
+  padding: 18px;
   border: 1px solid var(--app-box-border-soft);
   border-left: 6px solid var(--app-box-border);
   border-radius: 22px;
@@ -55,7 +55,7 @@
 .app-box__icon {
   width: 52px;
   height: 52px;
-  border-radius: 16px;
+  border-radius: 10px;
   display: grid;
   place-items: center;
   background: #ffb4b4;
