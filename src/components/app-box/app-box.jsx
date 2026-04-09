@@ -3,9 +3,7 @@ import './app-box.css'
 function AppBox({
   title,
   description,
-  label,
   href,
-  onClick,
   icon,
   disabled = false,
 }) {
@@ -17,7 +15,6 @@ function AppBox({
         <h3 className="app-box__title">{title}</h3>
         {description ? <p className="app-box__description">{description}</p> : null}
       </div>
-      {label ? <span className="app-box__label">{label}</span> : null}
     </>
   )
 
@@ -27,7 +24,6 @@ function AppBox({
         className={classes}
         href={href}
         aria-disabled={disabled}
-        onClick={disabled ? (event) => event.preventDefault() : undefined}
       >
         {content}
       </a>
@@ -35,7 +31,7 @@ function AppBox({
   }
 
   return (
-    <button className={classes} type="button" onClick={onClick} disabled={disabled}>
+    <button className={classes} type="button" disabled={disabled}>
       {content}
     </button>
   )
