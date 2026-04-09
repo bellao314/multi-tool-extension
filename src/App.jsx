@@ -13,7 +13,7 @@ function App() {
       <section id="center">
         <section id="row">
           <AppBox
-            title={<h2>Productiv</h2>}
+            title={<h2 style={{fontSize: "2em"}}>Productiv</h2>}
             description="An all-in-one productivity tool"
             disabled={true}
           />

@@ -68,14 +68,14 @@
 
 .app-box__title {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.25rem;
   line-height: 1.1;
   color: var(--app-box-text);
 }
 
 .app-box__description {
   color: var(--app-box-label);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   line-height: 1;
   align-self: end;
 }
