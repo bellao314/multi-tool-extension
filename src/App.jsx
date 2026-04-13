@@ -8,59 +8,56 @@ import './App.css'
 import AppBox from './components/app-box/app-box.jsx'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <section id="center">
         <section id="row">
-          <div>
-            <h1 style={{ paddingRight: '20px' }}>Productiv</h1>
-          </div>
           <AppBox
-            title="Calculator"
-            label="Open calculator"
-            icon={
-              <img src={calculator} alt="Calculator" style={{ width: '90%', height: '90%' }} />
-            }
+            title={<h2 style={{fontSize: "2em"}}>Productiv</h2>}
+            description="An all-in-one productivity tool"
+            disabled={true}
           />
           <AppBox
-            title="Timer"
-            label="Set timer"
+            title="Calculator"
+            description="Perform calculations"
             icon={
-              <img src={timer} alt="Timer" style={{ width: '90%', height: '90%' }} />
+              <img src={calculator} alt="Calculator" style={{ width: '90%', height: '90%' }} />
             }
           />
         </section>
         <section id="row">
           <AppBox
+            title="Timer"
+            description="Set a timer"
+            icon={
+              <img src={timer} alt="Timer" style={{ width: '90%', height: '90%' }} />
+            }
+          />
+          <AppBox
             title="Notes"
-            label="Take notes"
+            description="Take notes"
             icon={
               <img src={notes} alt="Notes" style={{ width: '90%', height: '90%' }} />
             }
           />
+        </section>
+        <section id="row">
           <AppBox
             title="Screen Recorder"
-            label="Record screen"
+            description="Record your screen"
             icon={
               <img src={screen} alt="Screen Recorder" style={{ width: '90%', height: '90%' }} />
             }
           />
           <AppBox
-            title="Google Gemini Chatbot"
-            label="Chat with Gemini"
+            title="AI Chatbot"
+            description="Chat with Google Gemini"
             icon={
               <img src={chatbot} alt="Google Gemini Chatbot" style={{ width: '90%', height: '90%' }} />
             }
           />
         </section>
       </section>
-
-      <div className="ticks"></div>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
     </>
   )
 }

@@ -11,9 +11,9 @@
     0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 
   appearance: none;
-  width: 250px;
-  min-height: 200px;
-  padding: 18px;
+  width: 100%;
+  height: 150px;
+  padding: 12px;
   border: 1px solid var(--app-box-border-soft);
   border-left: 6px solid var(--app-box-border);
   border-radius: 22px;
@@ -23,7 +23,7 @@
   text-decoration: none;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  gap: 18px;
+  gap: 12px;
   text-align: left;
   cursor: pointer;
   transition:
@@ -47,14 +47,13 @@
 .app-box.is-disabled,
 .app-box:disabled,
 .app-box[aria-disabled='true'] {
-  opacity: 0.65;
-  cursor: not-allowed;
   transform: none;
+  cursor: default;
 }
 
 .app-box__icon {
-  width: 52px;
-  height: 52px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   display: grid;
   place-items: center;
@@ -69,30 +68,22 @@
 
 .app-box__title {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   line-height: 1.1;
   color: var(--app-box-text);
 }
 
 .app-box__description {
-  margin: 0;
-  color: var(--app-box-muted);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.app-box__label {
-  align-self: end;
   color: var(--app-box-label);
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.875rem;
+  line-height: 1;
+  align-self: end;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 500px) {
   .app-box {
     width: 100%;
-    min-height: 200px;
+    min-height: 150px;
     padding: 20px;
   }
 }
