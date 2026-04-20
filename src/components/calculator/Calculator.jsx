@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const BUTTON_ROWS = [
   ["C", "(", ")", "⌫"],
@@ -24,9 +24,161 @@ function sanitizeExpression(expression) {
   return normalized;
 }
 
+function tokenizeExpression(expression) {
+  const tokens = [];
+  let index = 0;
+
+  while (index < expression.length) {
+    const char = expression[index];
+
+    if (char === " ") {
+      index += 1;
+      continue;
+    }
+
+    const previousToken = tokens.at(-1);
+    const isUnaryMinus =
+      char === "-" &&
+      (tokens.length === 0 || previousToken === "(" || ["+", "-", "*", "/"].includes(previousToken));
+
+    if (/\d|\./.test(char) || isUnaryMinus) {
+      let value = isUnaryMinus ? "-" : "";
+      if (isUnaryMinus) {
+        index += 1;
+      }
+
+      let hasDecimal = false;
+
+      while (index < expression.length) {
+        const current = expression[index];
+
+        if (current === ".") {
+          if (hasDecimal) {
+            throw new Error("Invalid number format.");
+          }
+          hasDecimal = true;
+          value += current;
+          index += 1;
+          continue;
+        }
+
+        if (!/\d/.test(current)) {
+          break;
+        }
+
+        value += current;
+        index += 1;
+      }
+
+      if (value === "-" || value === "." || value === "-.") {
+        throw new Error("Invalid number format.");
+      }
+
+      tokens.push(value);
+      continue;
+    }
+
+    if (["+", "-", "*", "/", "(", ")"].includes(char)) {
+      tokens.push(char);
+      index += 1;
+      continue;
+    }
+
+    throw new Error("Only numbers and basic operators are supported.");
+  }
+
+  return tokens;
+}
+
+function toReversePolishNotation(tokens) {
+  const output = [];
+  const operators = [];
+  const precedence = { "+": 1, "-": 1, "*": 2, "/": 2 };
+
+  for (const token of tokens) {
+    if (!Number.isNaN(Number(token))) {
+      output.push(token);
+      continue;
+    }
+
+    if (token === "(") {
+      operators.push(token);
+      continue;
+    }
+
+    if (token === ")") {
+      while (operators.length > 0 && operators.at(-1) !== "(") {
+        output.push(operators.pop());
+      }
+
+      if (operators.pop() !== "(") {
+        throw new Error("Mismatched parentheses.");
+      }
+
+      continue;
+    }
+
+    while (
+      operators.length > 0 &&
+      operators.at(-1) !== "(" &&
+      precedence[operators.at(-1)] >= precedence[token]
+    ) {
+      output.push(operators.pop());
+    }
+
+    operators.push(token);
+  }
+
+  while (operators.length > 0) {
+    const operator = operators.pop();
+    if (operator === "(") {
+      throw new Error("Mismatched parentheses.");
+    }
+    output.push(operator);
+  }
+
+  return output;
+}
+
+function calculateRpn(tokens) {
+  const stack = [];
+
+  for (const token of tokens) {
+    if (!Number.isNaN(Number(token))) {
+      stack.push(Number(token));
+      continue;
+    }
+
+    const right = stack.pop();
+    const left = stack.pop();
+
+    if (left === undefined || right === undefined) {
+      throw new Error("That calculation couldn't be evaluated.");
+    }
+
+    if (token === "+") stack.push(left + right);
+    if (token === "-") stack.push(left - right);
+    if (token === "*") stack.push(left * right);
+    if (token === "/") {
+      if (right === 0) {
+        throw new Error("Cannot divide by zero.");
+      }
+      stack.push(left / right);
+    }
+  }
+
+  if (stack.length !== 1) {
+    throw new Error("That calculation couldn't be evaluated.");
+  }
+
+  return stack[0];
+}
+
 function evaluateExpression(expression) {
   const sanitized = sanitizeExpression(expression);
-  const result = Function(`"use strict"; return (${sanitized})`)();
+  const tokens = tokenizeExpression(sanitized);
+  const rpn = toReversePolishNotation(tokens);
+  const result = calculateRpn(rpn);
 
   if (typeof result !== "number" || Number.isNaN(result) || !Number.isFinite(result)) {
     throw new Error("That calculation couldn't be evaluated.");
@@ -167,7 +319,7 @@ export default function Calculator({ userId }) {
     void handleEvaluate();
   }
 
-  function useHistoryItem(item) {
+  function handleHistoryItem(item) {
     setError("");
     setExpression(item.expression);
     setResult(String(item.result));
@@ -252,7 +404,7 @@ export default function Calculator({ userId }) {
             key={item.id ?? `${item.expression}-${item.timestamp}`}
             type="button"
             className="history-item calc-history-item"
-            onClick={() => useHistoryItem(item)}
+            onClick={() => handleHistoryItem(item)}
           >
             <div className="calc-history-copy">
               <span className="hist-expr">{item.expression}</span>

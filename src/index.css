@@ -1,25 +1,28 @@
 :root {
   --popup-width: 510px;
   --popup-height: 550px;
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
+  --text: #d5d8e1;
+  --text-h: #fbfcff;
+  --bg: #111319;
+  --bg-elevated: #1b1e27;
+  --border: rgba(255, 255, 255, 0.14);
+  --code-bg: #20242d;
+  --accent: #d24b57;
+  --accent-strong: #ef6a75;
+  --accent-bg: rgba(239, 106, 117, 0.16);
+  --accent-border: rgba(239, 106, 117, 0.34);
+  --social-bg: rgba(255, 255, 255, 0.06);
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    rgba(0, 0, 0, 0.42) 0 20px 40px -20px,
+    rgba(255, 255, 255, 0.04) 0 0 0 1px inset;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --heading: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: dark;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -29,26 +32,6 @@
 
   @media (max-width: 1024px) {
     font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
   }
 }
 
@@ -69,9 +52,11 @@ body,
   width: 100%;
   min-height: var(--popup-height);
   text-align: center;
-  border-inline: 1px solid var(--border);
   display: flex;
   flex-direction: column;
+  background:
+    radial-gradient(circle at top, rgba(239, 106, 117, 0.14), transparent 32%),
+    linear-gradient(180deg, #1a1d25 0%, #0f1117 100%);
 }
 
 h1,

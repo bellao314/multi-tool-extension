@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
 import Calculator from "./components/calculator/Calculator";
-import Notes from "./components/Notes";
 import Timer from "./components/timer/Timer";
 import ScreenRecording from "./components/screen-recording/ScreenRecording";
-import GeminiChat from "./components/GeminiChat";
 import "./App.css";
 
 // generate or retrieve a stable device ID — used as userId for Supabase
 // falls back to localStorage in dev mode (no chrome.storage available)
 async function getDeviceId() {
   try {
-    if (typeof chrome !== "undefined" && chrome.storage) {
-      const result = await chrome.storage.local.get("deviceId");
+    const extensionChrome = globalThis.chrome;
+
+    if (extensionChrome?.storage) {
+      const result = await extensionChrome.storage.local.get("deviceId");
       if (result.deviceId) return result.deviceId;
       const id = crypto.randomUUID();
-      await chrome.storage.local.set({ deviceId: id });
+      await extensionChrome.storage.local.set({ deviceId: id });
       return id;
     }
   } catch {
@@ -31,16 +31,33 @@ async function getDeviceId() {
 }
 
 const TABS = [
-  { id: "calc",    label: "Calc",    icon: "🧮" },
-  { id: "notes",   label: "Notes",   icon: "📝" },
-  { id: "timer",   label: "Timer",   icon: "⏱️" },
-  { id: "record",  label: "Record",  icon: "🎥" },
-  { id: "chat",    label: "AI Chat", icon: "🤖" },
+  {
+    id: "calc",
+    label: "Calculator",
+    eyebrow: "Precision",
+    subtitle: "Fast calculations with saved history",
+    icon: "01",
+  },
+  {
+    id: "timer",
+    label: "Timer",
+    eyebrow: "Focus",
+    subtitle: "Countdowns and stopwatch sessions",
+    icon: "02",
+  },
+  {
+    id: "record",
+    label: "Recorder",
+    eyebrow: "Capture",
+    subtitle: "Screen recordings with upload history",
+    icon: "03",
+  },
 ];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("calc");
   const [userId, setUserId] = useState(null);
+  const activeTool = TABS.find((tab) => tab.id === activeTab) ?? TABS[0];
 
   useEffect(() => {
     getDeviceId().then(setUserId);
@@ -52,8 +69,16 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* tab bar */}
-      <nav className="tab-bar">
+      <header className="app-header">
+        <div className="app-header-copy">
+          <p className="app-kicker">Workspace Tools</p>
+          <h1 className="app-title">{activeTool.label}</h1>
+          <p className="app-subtitle">{activeTool.subtitle}</p>
+        </div>
+        <div className="app-badge" aria-hidden="true">{activeTool.icon}</div>
+      </header>
+
+      <nav className="tab-bar" aria-label="Tool navigation">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -62,18 +87,18 @@ export default function App() {
             title={tab.label}
           >
             <span className="tab-icon">{tab.icon}</span>
-            <span className="tab-label">{tab.label}</span>
+            <span className="tab-copy">
+              <span className="tab-eyebrow">{tab.eyebrow}</span>
+              <span className="tab-label">{tab.label}</span>
+            </span>
           </button>
         ))}
       </nav>
 
-      {/* panel */}
       <main className="panel">
-        {activeTab === "calc"   && <Calculator userId={userId} />}
-        {activeTab === "notes"  && <Notes userId={userId} />}
-        {activeTab === "timer"  && <Timer userId={userId} />}
+        {activeTab === "calc" && <Calculator userId={userId} />}
+        {activeTab === "timer" && <Timer userId={userId} />}
         {activeTab === "record" && <ScreenRecording userId={userId} />}
-        {activeTab === "chat"   && <GeminiChat userId={userId} />}
       </main>
     </div>
   );
