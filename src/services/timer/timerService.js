@@ -1,14 +1,14 @@
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "../../lib/supabaseClient.js";
 
-const TABLE = "calculations";
+const TABLE = "timers";
 const MAX_HISTORY = 10;
 
-// save a new calculation to supabase
-export async function saveCalculation(expression, result, userId) {
+// save a completed timer session
+export async function saveTimerSession(label, duration, userId) {
   const { data, error } = await supabase.from(TABLE).insert([
     {
-      expression,
-      result,
+      label,
+      duration, // in seconds
       timestamp: new Date().toISOString(),
       user_id: userId,
     },
@@ -16,14 +16,14 @@ export async function saveCalculation(expression, result, userId) {
 
   if (error) throw error;
 
-  // check if we need to trim — FIFO, keep only the last 10
+  // FIFO cleanup — keep only the newest 10
   await cleanupOldest(userId);
 
   return data;
 }
 
-// grab the last 10 calculations for the history sidebar
-export async function getHistory(userId) {
+// fetch the last 10 timer sessions for the history view
+export async function getTimerHistory(userId) {
   const { data, error } = await supabase
     .from(TABLE)
     .select("*")
@@ -37,7 +37,6 @@ export async function getHistory(userId) {
 
 // delete the oldest records if the user has more than 10
 export async function cleanupOldest(userId) {
-  // first, count how many the user has
   const { count, error: countError } = await supabase
     .from(TABLE)
     .select("*", { count: "exact", head: true })
@@ -46,7 +45,6 @@ export async function cleanupOldest(userId) {
   if (countError) throw countError;
 
   if (count > MAX_HISTORY) {
-    // grab the IDs of everything past the 10 most recent
     const { data: old, error: fetchError } = await supabase
       .from(TABLE)
       .select("id")

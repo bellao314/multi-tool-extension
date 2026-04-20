@@ -1,7 +1,24 @@
 import { createClient } from "@supabase/supabase-js";
 
-// pull these from env or chrome.storage — don't hardcode keys
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+const viteEnv = typeof import.meta !== "undefined" ? import.meta.env : undefined;
+
+// Support both the Vite frontend runtime and a standalone Node backend entrypoint.
+const supabaseUrl =
+  viteEnv?.VITE_SUPABASE_URL ||
+  process.env.VITE_SUPABASE_URL ||
+  process.env.SUPABASE_URL ||
+  "";
+
+const supabaseAnonKey =
+  viteEnv?.VITE_SUPABASE_ANON_KEY ||
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  "";
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Missing Supabase configuration. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY before starting the app.",
+  );
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
