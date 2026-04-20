@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import Calculator from "./components/Calculator";
+import Calculator from "./components/calculator/Calculator";
 import Notes from "./components/Notes";
-import Timer from "./components/Timer";
-import ScreenRecording from "./components/ScreenRecording";
+import Timer from "./components/timer/Timer";
+import ScreenRecording from "./components/screen-recording/ScreenRecording";
 import GeminiChat from "./components/GeminiChat";
 import "./App.css";
 

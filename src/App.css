@@ -211,6 +211,121 @@
 .calc-btn.accent { background: var(--accent); color: #fff; border-color: var(--accent); }
 .calc-btn.accent:hover { opacity: 0.85; }
 .calc-btn.danger { color: #ef4444; }
+.calc-btn.utility {
+  background: transparent;
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.calculator-panel {
+  gap: 14px;
+  background:
+    radial-gradient(circle at top right, var(--accent-bg), transparent 34%),
+    linear-gradient(180deg, rgba(244, 243, 236, 0.35), transparent 30%);
+}
+
+.calc-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.calc-title {
+  margin: 4px 0 0;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.calc-history-pill {
+  flex-shrink: 0;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  text-transform: uppercase;
+}
+
+.calc-display-card {
+  min-height: 96px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.calc-display-label {
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.calc-compose {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.calc-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calc-expression-input {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: 15px;
+  padding: 11px 12px;
+}
+
+.calc-expression-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.calc-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.calc-actions > button {
+  flex: 1;
+}
+
+.calc-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.calc-history-meta,
+.calc-history-time {
+  color: var(--text);
+  font-size: 11px;
+}
+
+.calc-history-item {
+  gap: 12px;
+}
+
+.calc-history-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
 
 /* ===== history list (shared by calc + timer) ===== */
 
