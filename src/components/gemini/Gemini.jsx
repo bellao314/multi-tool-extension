@@ -107,8 +107,13 @@ export default function Gemini() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    void refreshPageContext();
-  }, []);
+    if (includePage) {
+      void refreshPageContext();
+      return;
+    }
+
+    setError("");
+  }, [includePage]);
 
   async function refreshPageContext() {
     setIsReadingPage(true);
@@ -184,28 +189,16 @@ export default function Gemini() {
 
   return (
     <div className="tool-panel gemini-panel">
-      <div className="gemini-hero">
-        <div>
-          <p className="section-title">Gemini Assistant</p>
-          <h2 className="gemini-title">Chat with page-aware context</h2>
-        </div>
-        <button
-          type="button"
-          className="secondary-btn"
-          onClick={() => void refreshPageContext()}
-          disabled={isReadingPage}
-        >
-          {isReadingPage ? "Reading..." : "Refresh Page"}
-        </button>
-      </div>
-
       <label className="gemini-context-toggle">
         <input
           type="checkbox"
           checked={includePage}
           onChange={(event) => setIncludePage(event.target.checked)}
         />
-        <span>Include page context</span>
+        <span>
+          Include page context
+          {includePage && isReadingPage ? " (reading...)" : ""}
+        </span>
       </label>
 
       <div className="gemini-chat-shell">
