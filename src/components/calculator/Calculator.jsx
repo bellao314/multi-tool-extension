@@ -197,6 +197,10 @@ function formatTimestamp(timestamp) {
 }
 
 async function apiRequest(path, options = {}) {
+  if (!API_BASE_URL) {
+    throw new Error("Missing API base URL.");
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
@@ -248,7 +252,7 @@ export default function Calculator({ userId }) {
       } catch (loadError) {
         console.error("calculator history load failed:", loadError);
         if (isMounted) {
-          setError("Couldn't load calculation history.");
+          setError("Calculation history is unavailable right now. You can still use the calculator.");
         }
       } finally {
         if (isMounted) {
@@ -300,15 +304,24 @@ export default function Calculator({ userId }) {
     try {
       const computed = evaluateExpression(expression);
       setResult(computed);
-      setIsSaving(true);
       setError("");
+      setIsSaving(true);
 
-      await saveCalculation(expression, computed, userId);
-      const updatedHistory = await getCalculationHistory(userId);
-      setHistory(updatedHistory || []);
     } catch (evaluationError) {
       console.error("calculator evaluation failed:", evaluationError);
       setError(evaluationError.message || "Calculation failed.");
+      setIsSaving(false);
+      return;
+    }
+
+    try {
+      const computed = evaluateExpression(expression);
+      await saveCalculation(expression, computed, userId);
+      const updatedHistory = await getCalculationHistory(userId);
+      setHistory(updatedHistory || []);
+    } catch (saveError) {
+      console.error("calculator history save failed:", saveError);
+      setError("Calculated successfully, but couldn't save this result to history.");
     } finally {
       setIsSaving(false);
     }
