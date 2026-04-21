@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import {
+  getHistory as getCalculationHistory,
+  saveCalculation,
+} from "../../services/calculator/calculatorService.js";
 
 const BUTTON_ROWS = [
   ["C", "(", ")", "⌫"],
@@ -196,38 +198,6 @@ function formatTimestamp(timestamp) {
   });
 }
 
-async function apiRequest(path, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
-
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(payload.error || "Request failed.");
-  }
-
-  return payload.data;
-}
-
-function getCalculationHistory(userId) {
-  const params = new URLSearchParams({ userId });
-  return apiRequest(`/api/calculator/history?${params.toString()}`, {
-    method: "GET",
-  });
-}
-
-function saveCalculation(expression, result, userId) {
-  return apiRequest("/api/calculator/history", {
-    method: "POST",
-    body: JSON.stringify({ expression, result, userId }),
-  });
-}
-
 export default function Calculator({ userId }) {
   const [expression, setExpression] = useState("");
   const [result, setResult] = useState("");
@@ -248,7 +218,7 @@ export default function Calculator({ userId }) {
       } catch (loadError) {
         console.error("calculator history load failed:", loadError);
         if (isMounted) {
-          setError("Couldn't load calculation history.");
+          setError("Calculation history is unavailable right now. You can still use the calculator.");
         }
       } finally {
         if (isMounted) {
@@ -300,15 +270,24 @@ export default function Calculator({ userId }) {
     try {
       const computed = evaluateExpression(expression);
       setResult(computed);
-      setIsSaving(true);
       setError("");
+      setIsSaving(true);
 
-      await saveCalculation(expression, computed, userId);
-      const updatedHistory = await getCalculationHistory(userId);
-      setHistory(updatedHistory || []);
     } catch (evaluationError) {
       console.error("calculator evaluation failed:", evaluationError);
       setError(evaluationError.message || "Calculation failed.");
+      setIsSaving(false);
+      return;
+    }
+
+    try {
+      const computed = evaluateExpression(expression);
+      await saveCalculation(expression, computed, userId);
+      const updatedHistory = await getCalculationHistory(userId);
+      setHistory(updatedHistory || []);
+    } catch (saveError) {
+      console.error("calculator history save failed:", saveError);
+      setError("Calculated successfully, but couldn't save this result to history.");
     } finally {
       setIsSaving(false);
     }
@@ -327,19 +306,11 @@ export default function Calculator({ userId }) {
 
   return (
     <div className="tool-panel calculator-panel">
-      <div className="calc-hero">
-        <div>
-          <p className="section-title">Calculator</p>
-          <h2 className="calc-title">Quick math with saved history</h2>
-        </div>
-        <span className="calc-history-pill">{history.length} saved</span>
-      </div>
-
       <div className="calc-display calc-display-card">
         <span className="calc-display-label">Expression</span>
         <div className="calc-expr">{expression || "0"}</div>
         <div className="calc-result">
-          {result ? `Result: ${result}` : previewResult ? `Preview: ${previewResult}` : "Result will appear here"}
+          {result ? `Result: ${result}` : previewResult ? `${previewResult}` : null}
         </div>
       </div>
 

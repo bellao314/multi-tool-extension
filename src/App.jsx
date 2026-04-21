@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Calculator from "./components/calculator/Calculator";
 import Timer from "./components/timer/Timer";
 import ScreenRecording from "./components/screen-recording/ScreenRecording";
+import Gemini from "./components/gemini/Gemini";
 import "./App.css";
 
 // generate or retrieve a stable device ID — used as userId for Supabase
@@ -34,30 +35,28 @@ const TABS = [
   {
     id: "calc",
     label: "Calculator",
-    eyebrow: "Precision",
     subtitle: "Fast calculations with saved history",
-    icon: "01",
   },
   {
     id: "timer",
     label: "Timer",
-    eyebrow: "Focus",
     subtitle: "Countdowns and stopwatch sessions",
-    icon: "02",
   },
   {
     id: "record",
-    label: "Recorder",
-    eyebrow: "Capture",
+    label: "Screen Recorder",
     subtitle: "Screen recordings with upload history",
-    icon: "03",
+  },
+  {
+    id: "gemini",
+    label: "Gemini",
+    subtitle: "Page-aware chat",
   },
 ];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("calc");
   const [userId, setUserId] = useState(null);
-  const activeTool = TABS.find((tab) => tab.id === activeTab) ?? TABS[0];
 
   useEffect(() => {
     getDeviceId().then(setUserId);
@@ -69,15 +68,6 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <div className="app-header-copy">
-          <p className="app-kicker">Workspace Tools</p>
-          <h1 className="app-title">{activeTool.label}</h1>
-          <p className="app-subtitle">{activeTool.subtitle}</p>
-        </div>
-        <div className="app-badge" aria-hidden="true">{activeTool.icon}</div>
-      </header>
-
       <nav className="tab-bar" aria-label="Tool navigation">
         {TABS.map((tab) => (
           <button
@@ -86,9 +76,7 @@ export default function App() {
             onClick={() => setActiveTab(tab.id)}
             title={tab.label}
           >
-            <span className="tab-icon">{tab.icon}</span>
             <span className="tab-copy">
-              <span className="tab-eyebrow">{tab.eyebrow}</span>
               <span className="tab-label">{tab.label}</span>
             </span>
           </button>
@@ -99,6 +87,7 @@ export default function App() {
         {activeTab === "calc" && <Calculator userId={userId} />}
         {activeTab === "timer" && <Timer userId={userId} />}
         {activeTab === "record" && <ScreenRecording userId={userId} />}
+        {activeTab === "gemini" && <Gemini userId={userId} />}
       </main>
     </div>
   );

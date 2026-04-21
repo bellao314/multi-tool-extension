@@ -7,10 +7,10 @@
   --bg-elevated: #1b1e27;
   --border: rgba(255, 255, 255, 0.14);
   --code-bg: #20242d;
-  --accent: #d24b57;
-  --accent-strong: #ef6a75;
-  --accent-bg: rgba(239, 106, 117, 0.16);
-  --accent-border: rgba(239, 106, 117, 0.34);
+  --accent: #3e7be8;
+  --accent-strong: #5da2ff;
+  --accent-bg: rgba(93, 162, 255, 0.16);
+  --accent-border: rgba(93, 162, 255, 0.34);
   --social-bg: rgba(255, 255, 255, 0.06);
   --shadow:
     rgba(0, 0, 0, 0.42) 0 20px 40px -20px,
@@ -55,7 +55,7 @@ body,
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(circle at top, rgba(239, 106, 117, 0.14), transparent 32%),
+    radial-gradient(circle at top, rgba(93, 162, 255, 0.14), transparent 32%),
     linear-gradient(180deg, #1a1d25 0%, #0f1117 100%);
 }
 

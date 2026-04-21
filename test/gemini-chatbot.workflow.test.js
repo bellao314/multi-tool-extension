@@ -1,3 +1,5 @@
+import { describe, test } from "node:test";
+
 describe("Gemini Chatbot Workflow", () => {
   test("opens the Chat tab and loads the 10 most recent thread headers into the Recent Chats sidebar", () => {
     // Arrange:

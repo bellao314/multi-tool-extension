@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
+import {
+  getTimerHistory,
+  saveTimerSession,
+} from "../../services/timer/timerService.js";
 
 // format seconds as HH:MM:SS
 function fmt(secs) {
@@ -18,38 +20,6 @@ function fmtDuration(secs) {
   if (m === 0) return `${s}s`;
   if (s === 0) return `${m}m`;
   return `${m}m ${s}s`;
-}
-
-async function apiRequest(path, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
-
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(payload.error || "Request failed.");
-  }
-
-  return payload.data;
-}
-
-function getTimerHistory(userId) {
-  const params = new URLSearchParams({ userId });
-  return apiRequest(`/api/timer/history?${params.toString()}`, {
-    method: "GET",
-  });
-}
-
-function saveTimerSession(label, duration, userId) {
-  return apiRequest("/api/timer/history", {
-    method: "POST",
-    body: JSON.stringify({ label, duration, userId }),
-  });
 }
 
 export default function Timer({ userId }) {
