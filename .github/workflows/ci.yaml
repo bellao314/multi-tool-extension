@@ -35,9 +35,7 @@ jobs:
           node-version: "lts/*"
 
       - name: Install Dependencies
-        working-directory: multi-tool-extension
         run: npm install
 
       - name: Run ESLint
-        working-directory: multi-tool-extension
         run: npm run lint
