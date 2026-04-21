@@ -1,3 +1,5 @@
+import { describe, test } from "node:test";
+
 describe("Screen Recording Workflow", () => {
   test("starts recording and browser asks for screen share permission, then timer kicks on", () => {
     // Arrange:

@@ -1,5 +1,5 @@
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || "gemini-1.5-flash";
+const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || "gemini-3-flash-preview";
 
 chrome.action.onClicked.addListener((tab) => {
   chrome.sidePanel?.open({ windowId: tab.windowId });

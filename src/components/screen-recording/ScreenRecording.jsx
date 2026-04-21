@@ -1,55 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import {
+  getRecordings,
+  uploadRecording,
+} from "../../services/screen-recording/screenRecordingService.js";
 
 // format seconds as MM:SS
 function fmt(secs) {
   const m = Math.floor(secs / 60);
   const s = secs % 60;
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-}
-
-async function apiRequest(path, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
-
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(payload.error || "Request failed.");
-  }
-
-  return payload.data;
-}
-
-function getRecordings(userId) {
-  const params = new URLSearchParams({ userId });
-  return apiRequest(`/api/screen-recording/history?${params.toString()}`, {
-    method: "GET",
-  });
-}
-
-function blobToDataUrl(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("Failed to read recording."));
-    reader.readAsDataURL(blob);
-  });
-}
-
-async function uploadRecording(blob, duration, userId) {
-  const recording = await blobToDataUrl(blob);
-
-  return apiRequest("/api/screen-recording", {
-    method: "POST",
-    body: JSON.stringify({ recording, duration, userId }),
-  });
 }
 
 export default function ScreenRecording({ userId }) {
