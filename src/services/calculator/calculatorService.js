@@ -1,4 +1,4 @@
-import { supabase } from "../../lib/supabaseClient.js";
+import { supabase } from "../lib/supabaseClient.js";
 
 const TABLE = "calculations";
 const MAX_HISTORY = 10;
