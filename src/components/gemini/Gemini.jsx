@@ -22,7 +22,7 @@ const QUICK_PROMPTS = [
 const INTRO_MESSAGE = {
   role: "assistant",
   content:
-    "I can work with the current webpage, answer custom questions, and help draft calendar events you can export or open in Google Calendar.",
+    "I can work with the current webpage and answer custom questions.",
 };
 
 function formatChatTime() {
