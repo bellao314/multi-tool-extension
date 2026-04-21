@@ -327,19 +327,11 @@ export default function Calculator({ userId }) {
 
   return (
     <div className="tool-panel calculator-panel">
-      <div className="calc-hero">
-        <div>
-          <p className="section-title">Calculator</p>
-          <h2 className="calc-title">Quick math with saved history</h2>
-        </div>
-        <span className="calc-history-pill">{history.length} saved</span>
-      </div>
-
       <div className="calc-display calc-display-card">
         <span className="calc-display-label">Expression</span>
         <div className="calc-expr">{expression || "0"}</div>
         <div className="calc-result">
-          {result ? `Result: ${result}` : previewResult ? `Preview: ${previewResult}` : "Result will appear here"}
+          {result ? `Result: ${result}` : previewResult ? `${previewResult}` : null}
         </div>
       </div>
 
