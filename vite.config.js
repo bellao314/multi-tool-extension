@@ -19,6 +19,13 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: './index.html',
+        background: './src/background.js',
+      },
+      output: {
+        entryFileNames: (chunkInfo) =>
+          chunkInfo.name === 'background' ? '[name].js' : 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
   },

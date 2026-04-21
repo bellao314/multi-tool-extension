@@ -1,65 +1,94 @@
-import { useState } from 'react'
-import calculator from './assets/keys.png'
-import timer from './assets/timer.png'
-import notes from './assets/notes.png'
-import screen from './assets/monitor-screen.png'
-import chatbot from './assets/chatbot.png'
-import './App.css'
-import AppBox from './components/app-box/app-box.jsx'
+import { useState, useEffect } from "react";
+import Calculator from "./components/calculator/Calculator";
+import Timer from "./components/timer/Timer";
+import ScreenRecording from "./components/screen-recording/ScreenRecording";
+import Gemini from "./components/gemini/Gemini";
+import "./App.css";
 
-function App() {
-  return (
-    <>
-      <section id="center">
-        <section id="row">
-          <AppBox
-            title={<h2 style={{fontSize: "2em"}}>Productiv</h2>}
-            description="An all-in-one productivity tool"
-            disabled={true}
-          />
-          <AppBox
-            title="Calculator"
-            description="Perform calculations"
-            icon={
-              <img src={calculator} alt="Calculator" style={{ width: '90%', height: '90%' }} />
-            }
-          />
-        </section>
-        <section id="row">
-          <AppBox
-            title="Timer"
-            description="Set a timer"
-            icon={
-              <img src={timer} alt="Timer" style={{ width: '90%', height: '90%' }} />
-            }
-          />
-          <AppBox
-            title="Notes"
-            description="Take notes"
-            icon={
-              <img src={notes} alt="Notes" style={{ width: '90%', height: '90%' }} />
-            }
-          />
-        </section>
-        <section id="row">
-          <AppBox
-            title="Screen Recorder"
-            description="Record your screen"
-            icon={
-              <img src={screen} alt="Screen Recorder" style={{ width: '90%', height: '90%' }} />
-            }
-          />
-          <AppBox
-            title="AI Chatbot"
-            description="Chat with Google Gemini"
-            icon={
-              <img src={chatbot} alt="Google Gemini Chatbot" style={{ width: '90%', height: '90%' }} />
-            }
-          />
-        </section>
-      </section>
-    </>
-  )
+// generate or retrieve a stable device ID — used as userId for Supabase
+// falls back to localStorage in dev mode (no chrome.storage available)
+async function getDeviceId() {
+  try {
+    const extensionChrome = globalThis.chrome;
+
+    if (extensionChrome?.storage) {
+      const result = await extensionChrome.storage.local.get("deviceId");
+      if (result.deviceId) return result.deviceId;
+      const id = crypto.randomUUID();
+      await extensionChrome.storage.local.set({ deviceId: id });
+      return id;
+    }
+  } catch {
+    // swallow — falls through to localStorage
+  }
+
+  // dev fallback
+  let id = localStorage.getItem("deviceId");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("deviceId", id);
+  }
+  return id;
 }
 
-export default App
+const TABS = [
+  {
+    id: "calc",
+    label: "Calculator",
+    subtitle: "Fast calculations with saved history",
+  },
+  {
+    id: "timer",
+    label: "Timer",
+    subtitle: "Countdowns and stopwatch sessions",
+  },
+  {
+    id: "record",
+    label: "Screen Recorder",
+    subtitle: "Screen recordings with upload history",
+  },
+  {
+    id: "gemini",
+    label: "Gemini",
+    subtitle: "Page-aware chat",
+  },
+];
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState("calc");
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    getDeviceId().then(setUserId);
+  }, []);
+
+  if (!userId) {
+    return <div className="loading-screen">Loading...</div>;
+  }
+
+  return (
+    <div className="app">
+      <nav className="tab-bar" aria-label="Tool navigation">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            className={`tab-btn ${activeTab === tab.id ? "active" : ""}`}
+            onClick={() => setActiveTab(tab.id)}
+            title={tab.label}
+          >
+            <span className="tab-copy">
+              <span className="tab-label">{tab.label}</span>
+            </span>
+          </button>
+        ))}
+      </nav>
+
+      <main className="panel">
+        {activeTab === "calc" && <Calculator userId={userId} />}
+        {activeTab === "timer" && <Timer userId={userId} />}
+        {activeTab === "record" && <ScreenRecording userId={userId} />}
+        {activeTab === "gemini" && <Gemini userId={userId} />}
+      </main>
+    </div>
+  );
+}
