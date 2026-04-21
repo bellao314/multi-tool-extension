@@ -1,3 +1,5 @@
+import { describe, test } from "node:test";
+
 describe("Scientific Calculator Workflow", () => {
   test("opens the extension popup and shows the Calculator tab when the user selects it", () => {
     // Arrange:
