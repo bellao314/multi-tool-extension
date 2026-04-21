@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import {
+  getHistory as getCalculationHistory,
+  saveCalculation,
+} from "../../services/calculator/calculatorService.js";
 
 const BUTTON_ROWS = [
   ["C", "(", ")", "⌫"],
@@ -193,42 +195,6 @@ function formatTimestamp(timestamp) {
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
-  });
-}
-
-async function apiRequest(path, options = {}) {
-  if (!API_BASE_URL) {
-    throw new Error("Missing API base URL.");
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
-
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(payload.error || "Request failed.");
-  }
-
-  return payload.data;
-}
-
-function getCalculationHistory(userId) {
-  const params = new URLSearchParams({ userId });
-  return apiRequest(`/api/calculator/history?${params.toString()}`, {
-    method: "GET",
-  });
-}
-
-function saveCalculation(expression, result, userId) {
-  return apiRequest("/api/calculator/history", {
-    method: "POST",
-    body: JSON.stringify({ expression, result, userId }),
   });
 }
 
