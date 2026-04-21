@@ -22,7 +22,7 @@
   color: var(--text);
   font-size: 14px;
   background:
-    radial-gradient(circle at top, rgba(239, 106, 117, 0.14), transparent 36%),
+    radial-gradient(circle at top, rgba(93, 162, 255, 0.14), transparent 36%),
     linear-gradient(180deg, #1a1d25 0%, #0f1117 100%);
 }
 
@@ -65,8 +65,8 @@
   color: var(--text-h);
   border-color: var(--accent-border);
   box-shadow:
-    0 0 0 1px rgba(239, 106, 117, 0.22) inset,
-    0 14px 28px -18px rgba(239, 106, 117, 0.36);
+    0 0 0 1px rgba(93, 162, 255, 0.22) inset,
+    0 14px 28px -18px rgba(93, 162, 255, 0.36);
 }
 
 .tab-copy {
@@ -145,9 +145,9 @@
 .secondary-btn.lg { padding: 10px 20px; font-size: 14px; }
 
 .danger-btn {
-  background: rgba(239, 106, 117, 0.1);
-  color: #ffd2d6;
-  border: 1px solid rgba(239, 106, 117, 0.32);
+  background: rgba(93, 162, 255, 0.1);
+  color: #d9e9ff;
+  border: 1px solid rgba(93, 162, 255, 0.32);
   border-radius: 12px;
   padding: 8px 14px;
   font-size: 13px;
@@ -155,7 +155,7 @@
   cursor: pointer;
   transition: background 0.15s, transform 0.15s;
 }
-.danger-btn:hover { background: rgba(239, 106, 117, 0.18); transform: translateY(-1px); }
+.danger-btn:hover { background: rgba(93, 162, 255, 0.18); transform: translateY(-1px); }
 .danger-btn.sm { padding: 3px 8px; font-size: 11px; }
 .danger-btn.lg { padding: 10px 20px; font-size: 14px; }
 
@@ -176,10 +176,10 @@
 }
 
 .error-msg {
-  background: rgba(239, 106, 117, 0.12);
-  border: 1px solid rgba(239, 106, 117, 0.3);
+  background: rgba(93, 162, 255, 0.12);
+  border: 1px solid rgba(93, 162, 255, 0.3);
   border-radius: 12px;
-  color: #ffd7da;
+  color: #dceaff;
   font-size: 12px;
   padding: 8px 12px;
 }
@@ -210,7 +210,7 @@
 }
 
 .hist-result {
-  color: #ffd6d9;
+  color: #d4e6ff;
   font-size: 12px;
   font-family: var(--mono);
 }
@@ -270,7 +270,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #ffc2c7;
+  color: #b9d8ff;
 }
 
 .gemini-context-toggle {
@@ -290,8 +290,8 @@
 .gemini-prompt-chip {
   border: 1px solid var(--accent-border);
   border-radius: 16px;
-  background: rgba(239, 106, 117, 0.08);
-  color: #ffe6e8;
+  background: rgba(93, 162, 255, 0.08);
+  color: #e7f2ff;
   padding: 12px 14px;
   font-size: 12px;
   font-weight: 600;
@@ -302,7 +302,7 @@
 
 .gemini-prompt-chip:hover:not(:disabled) {
   transform: translateY(-1px);
-  background: rgba(239, 106, 117, 0.14);
+  background: rgba(93, 162, 255, 0.14);
 }
 
 .gemini-prompt-chip:disabled {
@@ -338,8 +338,8 @@
 }
 
 .gemini-message.user {
-  background: rgba(239, 106, 117, 0.12);
-  border: 1px solid rgba(239, 106, 117, 0.24);
+  background: rgba(93, 162, 255, 0.12);
+  border: 1px solid rgba(93, 162, 255, 0.24);
 }
 
 .gemini-message-meta {
@@ -347,7 +347,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: #ffc2c7;
+  color: #b9d8ff;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -395,7 +395,7 @@
 .gemini-field textarea:focus {
   outline: none;
   border-color: var(--accent-border);
-  box-shadow: 0 0 0 1px rgba(239, 106, 117, 0.22);
+  box-shadow: 0 0 0 1px rgba(93, 162, 255, 0.22);
 }
 
 .gemini-event-grid {
@@ -501,8 +501,8 @@
 .calculator-panel {
   gap: 14px;
   background:
-    radial-gradient(circle at top right, rgba(239, 106, 117, 0.1), transparent 34%),
-    linear-gradient(180deg, rgba(239, 106, 117, 0.04), transparent 30%);
+    radial-gradient(circle at top right, rgba(93, 162, 255, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(93, 162, 255, 0.04), transparent 30%);
 }
 
 .calc-hero {
@@ -757,7 +757,7 @@
 }
 
 .toggle-btn.active {
-  background: rgba(239, 106, 117, 0.14);
+  background: rgba(93, 162, 255, 0.12);
   border-color: var(--accent-border);
   color: #fff0f1;
   font-weight: 600;

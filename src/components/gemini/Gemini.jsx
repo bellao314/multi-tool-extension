@@ -184,16 +184,14 @@ export default function Gemini() {
 
   return (
     <div className="tool-panel gemini-panel">
-      <div className="gemini-hero">
-        <button
-          type="button"
-          className="secondary-btn"
-          onClick={() => void refreshPageContext()}
-          disabled={isReadingPage}
-        >
-          {isReadingPage ? "Reading..." : "Refresh Page"}
-        </button>
-      </div>
+      <button
+        type="button"
+        className="secondary-btn"
+        onClick={() => void refreshPageContext()}
+        disabled={isReadingPage}
+      >
+        {isReadingPage ? "Reading..." : "Refresh Page"}
+      </button>
 
       <label className="gemini-context-toggle">
         <input
@@ -204,7 +202,6 @@ export default function Gemini() {
         <span>Include page context</span>
       </label>
 
-      <div className="gemini-chat-shell">
         <div className="gemini-chat-log">
           {messages.map((message) => (
             <div
@@ -260,6 +257,5 @@ export default function Gemini() {
             </div>
         </form>
     </div>
-</div>
   );
 }
