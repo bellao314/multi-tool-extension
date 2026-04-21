@@ -8,11 +8,6 @@ const QUICK_PROMPTS = [
     prompt: "Summarize this page for me in a few clear bullet points.",
   },
   {
-    id: "takeaways",
-    label: "Key takeaways",
-    prompt: "What are the key takeaways from this page, and what should I pay attention to?",
-  },
-  {
     id: "reply",
     label: "Draft a reply",
     prompt: "Draft a concise, friendly reply based on the content of this page.",
@@ -21,11 +16,6 @@ const QUICK_PROMPTS = [
     id: "actions",
     label: "Action items",
     prompt: "Turn this page into a short action-item checklist.",
-  },
-  {
-    id: "meeting",
-    label: "Meeting prep",
-    prompt: "Use this page to prepare me for a meeting: summary, questions to ask, and risks.",
   },
 ];
 
@@ -218,22 +208,6 @@ export default function Gemini() {
         <span>Include page context</span>
       </label>
 
-      <div className="gemini-prompt-grid" role="group" aria-label="Common Gemini prompts">
-        {QUICK_PROMPTS.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className="gemini-prompt-chip"
-            onClick={() => void handleQuickPrompt(item)}
-            disabled={isSending}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-
-      {error && <div className="error-msg">{error}</div>}
-
       <div className="gemini-chat-shell">
         <div className="gemini-chat-log">
           {messages.map((message) => (
@@ -251,29 +225,45 @@ export default function Gemini() {
         </div>
 
         <form className="gemini-compose" onSubmit={handlePromptSubmit}>
-          <label className="gemini-compose-wrap" htmlFor="gemini-prompt">
-            <span className="gemini-compose-label">Custom prompt</span>
-            <textarea
-              id="gemini-prompt"
-              className="gemini-compose-input"
-              value={prompt}
-              onChange={(event) => setPrompt(event.target.value)}
-              placeholder="Ask Gemini anything about this page, or write your own prompt..."
-              rows="4"
-            />
-          </label>
+            <div className="gemini-prompt-grid" role="group" aria-label="Common Gemini prompts">
+                {QUICK_PROMPTS.map((item) => (
+                <button
+                    key={item.id}
+                    type="button"
+                    className="gemini-prompt-chip"
+                    onClick={() => void handleQuickPrompt(item)}
+                    disabled={isSending}
+                >
+                    {item.label}
+                </button>
+                ))}
+            </div>
 
-          <div className="gemini-compose-actions">
-            <button
-              type="submit"
-              className="accent-btn"
-              disabled={!prompt.trim() || isSending}
-            >
-              {isSending ? "Sending..." : "Ask Gemini"}
-            </button>
-          </div>
+            {error && <div className="error-msg">{error}</div>}
+
+            <label className="gemini-compose-wrap" htmlFor="gemini-prompt">
+                <span className="gemini-compose-label">Custom prompt</span>
+                <textarea
+                id="gemini-prompt"
+                className="gemini-compose-input"
+                value={prompt}
+                onChange={(event) => setPrompt(event.target.value)}
+                placeholder="Ask Gemini anything about this page, or write your own prompt..."
+                rows="4"
+                />
+            </label>
+
+            <div className="gemini-compose-actions">
+                <button
+                type="submit"
+                className="accent-btn"
+                disabled={!prompt.trim() || isSending}
+                >
+                {isSending ? "Sending..." : "Ask Gemini"}
+                </button>
+            </div>
         </form>
-      </div>
     </div>
+</div>
   );
 }
