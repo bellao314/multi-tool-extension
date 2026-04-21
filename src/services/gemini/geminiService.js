@@ -62,7 +62,8 @@ export async function saveMessage(threadId, role, content) {
 }
 
 // send the conversation to Gemini via the background service worker
-// this keeps the API key off the extension page (security requirement)
+// this keeps the API key in the extension background worker.
+// expected env var: VITE_GEMINI_API_KEY
 export function sendToGemini(messages) {
   return new Promise((resolve, reject) => {
     // if chrome runtime isn't available (dev mode), return a mock

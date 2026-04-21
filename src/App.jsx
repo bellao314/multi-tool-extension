@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Calculator from "./components/calculator/Calculator";
 import Timer from "./components/timer/Timer";
 import ScreenRecording from "./components/screen-recording/ScreenRecording";
+import Gemini from "./components/gemini/Gemini";
 import "./App.css";
 
 // generate or retrieve a stable device ID — used as userId for Supabase
@@ -52,6 +53,13 @@ const TABS = [
     subtitle: "Screen recordings with upload history",
     icon: "03",
   },
+  {
+    id: "gemini",
+    label: "Gemini",
+    eyebrow: "Assist",
+    subtitle: "Page-aware chat and calendar event drafts",
+    icon: "04",
+  },
 ];
 
 export default function App() {
@@ -99,6 +107,7 @@ export default function App() {
         {activeTab === "calc" && <Calculator userId={userId} />}
         {activeTab === "timer" && <Timer userId={userId} />}
         {activeTab === "record" && <ScreenRecording userId={userId} />}
+        {activeTab === "gemini" && <Gemini userId={userId} />}
       </main>
     </div>
   );

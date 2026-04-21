@@ -38,6 +38,7 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: {
         ...globals.browser,
+        chrome: 'readonly',
         process: 'readonly',
       },
       parserOptions: {
