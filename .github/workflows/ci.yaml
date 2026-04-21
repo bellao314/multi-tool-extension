@@ -16,16 +16,14 @@ jobs:
         with:
           node-version: "lts/*"
 
-      - name: Install Python Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install docker-compose
-
-      - name: Install JavaScript Dependencies
+      - name: Install Dependencies
         run: npm install
 
       - name: Run Tests
         run: npm test
+
+      - name: Build Extension
+        run: npm run build
 
   lint:
     runs-on: ubuntu-latest
@@ -36,30 +34,10 @@ jobs:
         with:
           node-version: "lts/*"
 
-      - name: Install Python Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install docker-compose
-
-      - name: Install JavaScript Dependencies
+      - name: Install Dependencies
         working-directory: multi-tool-extension
         run: npm install
 
       - name: Run ESLint
         working-directory: multi-tool-extension
         run: npm run lint
-
-  # docker:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Build Docker Image
-  #       run: docker build -t my-app .
-  #     - name: Run Docker Container
-  #       run: docker run -d -p 3000:3000 my-app
-  #     - name: Test Docker Container
-  #       run: |
-  #         sleep 10 # Wait for the container to start
-  #         curl -f http://localhost:3000 || exit 1
-  #     - name: Stop Docker Container
-  #       run: docker stop $(docker ps -q --filter ancestor=my-app)
