@@ -16,6 +16,7 @@ export default defineConfig([
       globals: {
         ...globals.browser,
         chrome: 'readonly',
+        process: 'readonly',
       },
       parserOptions: {
         ecmaVersion: 'latest',
