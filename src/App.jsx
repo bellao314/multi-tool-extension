@@ -3,6 +3,7 @@ import Calculator from "./components/calculator/Calculator";
 import Timer from "./components/timer/Timer";
 import ScreenRecording from "./components/screen-recording/ScreenRecording";
 import Gemini from "./components/gemini/Gemini";
+import Notes from "./components/notes/Notes";
 import "./App.css";
 
 // generate or retrieve a stable device ID — used as userId for Supabase
@@ -52,6 +53,11 @@ const TABS = [
     label: "Gemini",
     subtitle: "Page-aware chat",
   },
+  {
+    id: "notes",
+    label: "Notes",
+    subtitle: "Synced personal notes",
+  },
 ];
 
 export default function App() {
@@ -88,6 +94,7 @@ export default function App() {
         {activeTab === "timer" && <Timer userId={userId} />}
         {activeTab === "record" && <ScreenRecording userId={userId} />}
         {activeTab === "gemini" && <Gemini userId={userId} />}
+        {activeTab === "notes" && <Notes userId={userId} />}
       </main>
     </div>
   );
