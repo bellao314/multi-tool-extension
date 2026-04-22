@@ -1,156 +1,20 @@
-import { useEffect, useRef, useState } from "react";
-
-// format seconds as MM:SS
-function fmt(secs) {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-}
-
-function buildRecordingName(timestamp) {
-  const stamp = timestamp
-    .toISOString()
-    .replace(/[:.]/g, "-")
-    .replace("T", "_")
-    .slice(0, 19);
-
-  return `screen-recording_${stamp}.webm`;
-}
+import {
+  formatRecordingDuration,
+  useScreenRecording,
+} from "../../services/screen-recording/screenRecordingService.js";
 
 export default function ScreenRecording() {
-  const [status, setStatus] = useState("idle"); // "idle" | "recording" | "paused"
-  const [duration, setDuration] = useState(0);
-  const [recordingDraft, setRecordingDraft] = useState(null);
-  const [error, setError] = useState("");
-
-  const mediaRecorderRef = useRef(null);
-  const chunksRef = useRef([]);
-  const intervalRef = useRef(null);
-  const draftUrlRef = useRef(null);
-  const durationRef = useRef(0);
-
-  useEffect(() => {
-    return () => {
-      clearInterval(intervalRef.current);
-      if (draftUrlRef.current) {
-        URL.revokeObjectURL(draftUrlRef.current);
-      }
-    };
-  }, []);
-
-  async function startRecording() {
-    setError("");
-    try {
-      // ask the browser for screen share — this triggers the permission dialog
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: { mediaSource: "screen" },
-        audio: true,
-      });
-
-      chunksRef.current = [];
-      const recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
-
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
-      };
-
-      recorder.onstop = async () => {
-        // clean up the stream tracks
-        stream.getTracks().forEach((track) => track.stop());
-        clearInterval(intervalRef.current);
-
-        const blob = new Blob(chunksRef.current, { type: "video/webm" });
-        const finishedAt = new Date();
-        const nextDraftUrl = URL.createObjectURL(blob);
-
-        setRecordingDraft(() => {
-          if (draftUrlRef.current) {
-            URL.revokeObjectURL(draftUrlRef.current);
-          }
-
-          draftUrlRef.current = nextDraftUrl;
-
-          return {
-            blob,
-            duration: durationRef.current,
-            timestamp: finishedAt.toISOString(),
-            url: nextDraftUrl,
-            filename: buildRecordingName(finishedAt),
-          };
-        });
-
-        setDuration(0);
-        durationRef.current = 0;
-        setStatus("idle");
-        mediaRecorderRef.current = null;
-      };
-
-      // if the user cancels the screen share picker, end gracefully
-      stream.getVideoTracks()[0].onended = () => {
-        if (recorder.state !== "inactive") {
-          recorder.stop();
-        }
-      };
-
-      recorder.start();
-      mediaRecorderRef.current = recorder;
-      setStatus("recording");
-      setDuration(0);
-      durationRef.current = 0;
-
-      // start the duration timer
-      intervalRef.current = setInterval(() => {
-        durationRef.current += 1;
-        setDuration(durationRef.current);
-      }, 1000);
-    } catch (e) {
-      // user probably hit cancel on the permission dialog — not really an error
-      if (e.name !== "NotAllowedError") {
-        setError("Couldn't start recording. Make sure you have screen share permission.");
-      }
-    }
-  }
-
-  function pauseRecording() {
-    if (mediaRecorderRef.current?.state === "recording") {
-      mediaRecorderRef.current.pause();
-      clearInterval(intervalRef.current);
-      setStatus("paused");
-    }
-  }
-
-  function resumeRecording() {
-    if (mediaRecorderRef.current?.state === "paused") {
-      mediaRecorderRef.current.resume();
-      intervalRef.current = setInterval(() => {
-        durationRef.current += 1;
-        setDuration(durationRef.current);
-      }, 1000);
-      setStatus("recording");
-    }
-  }
-
-  function stopRecording() {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      mediaRecorderRef.current.stop();
-    }
-  }
-
-  function clearDraft() {
-    setRecordingDraft(() => {
-      if (draftUrlRef.current) {
-        URL.revokeObjectURL(draftUrlRef.current);
-        draftUrlRef.current = null;
-      }
-      return null;
-    });
-    setError("");
-  }
-
-  async function handleRetake() {
-    clearDraft();
-    await startRecording();
-  }
+  const {
+    status,
+    duration,
+    recordingDraft,
+    error,
+    startRecording,
+    pauseRecording,
+    resumeRecording,
+    stopRecording,
+    retakeRecording,
+  } = useScreenRecording();
 
   return (
     <div className="tool-panel">
@@ -160,7 +24,7 @@ export default function ScreenRecording() {
           {status === "recording" && <span className="pulse-dot" />}
           {status === "paused" && <span className="pause-dot" />}
         </div>
-        <div className="rec-timer">{fmt(duration)}</div>
+        <div className="rec-timer">{formatRecordingDuration(duration)}</div>
         <div className="rec-status-label">
           {status === "idle" && "Ready"}
           {status === "recording" && "Recording"}
@@ -200,7 +64,7 @@ export default function ScreenRecording() {
                 {new Date(recordingDraft.timestamp).toLocaleDateString()}{" "}
                 {new Date(recordingDraft.timestamp).toLocaleTimeString()}
               </span>
-              <span className="hist-result">{fmt(recordingDraft.duration)}</span>
+              <span className="hist-result">{formatRecordingDuration(recordingDraft.duration)}</span>
             </div>
             <video className="rec-preview" controls src={recordingDraft.url} />
             <div className="rec-actions">
@@ -211,7 +75,7 @@ export default function ScreenRecording() {
               >
                 Download Recording
               </a>
-              <button className="secondary-btn" onClick={() => void handleRetake()}>
+              <button className="secondary-btn" onClick={() => void retakeRecording()}>
                 Retake Video
               </button>
             </div>
