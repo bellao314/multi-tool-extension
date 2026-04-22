@@ -1,8 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import {
-  getRecordings,
-  uploadRecording,
-} from "../../services/screen-recording/screenRecordingService.js";
+import { useEffect, useRef, useState } from "react";
 
 // format seconds as MM:SS
 function fmt(secs) {
@@ -11,31 +7,36 @@ function fmt(secs) {
   return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-export default function ScreenRecording({ userId }) {
+function buildRecordingName(timestamp) {
+  const stamp = timestamp
+    .toISOString()
+    .replace(/[:.]/g, "-")
+    .replace("T", "_")
+    .slice(0, 19);
+
+  return `screen-recording_${stamp}.webm`;
+}
+
+export default function ScreenRecording() {
   const [status, setStatus] = useState("idle"); // "idle" | "recording" | "paused"
   const [duration, setDuration] = useState(0);
-  const [recordings, setRecordings] = useState([]);
-  const [uploading, setUploading] = useState(false);
+  const [recordingDraft, setRecordingDraft] = useState(null);
   const [error, setError] = useState("");
 
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
   const intervalRef = useRef(null);
+  const draftUrlRef = useRef(null);
+  const durationRef = useRef(0);
 
   useEffect(() => {
-    loadRecordings();
-    return () => clearInterval(intervalRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      clearInterval(intervalRef.current);
+      if (draftUrlRef.current) {
+        URL.revokeObjectURL(draftUrlRef.current);
+      }
+    };
   }, []);
-
-  async function loadRecordings() {
-    try {
-      const data = await getRecordings(userId);
-      setRecordings(data || []);
-    } catch (e) {
-      console.error("recordings load failed:", e);
-    }
-  }
 
   async function startRecording() {
     setError("");
@@ -59,33 +60,48 @@ export default function ScreenRecording({ userId }) {
         clearInterval(intervalRef.current);
 
         const blob = new Blob(chunksRef.current, { type: "video/webm" });
-        setUploading(true);
-        try {
-          await uploadRecording(blob, duration, userId);
-          await loadRecordings();
-        } catch (e) {
-          setError("Upload failed — check your Supabase config.");
-          console.error("upload failed:", e);
-        } finally {
-          setUploading(false);
-          setDuration(0);
-          setStatus("idle");
-        }
+        const finishedAt = new Date();
+        const nextDraftUrl = URL.createObjectURL(blob);
+
+        setRecordingDraft((currentDraft) => {
+          if (draftUrlRef.current) {
+            URL.revokeObjectURL(draftUrlRef.current);
+          }
+
+          draftUrlRef.current = nextDraftUrl;
+
+          return {
+            blob,
+            duration: durationRef.current,
+            timestamp: finishedAt.toISOString(),
+            url: nextDraftUrl,
+            filename: buildRecordingName(finishedAt),
+          };
+        });
+
+        setDuration(0);
+        durationRef.current = 0;
+        setStatus("idle");
+        mediaRecorderRef.current = null;
       };
 
       // if the user cancels the screen share picker, end gracefully
       stream.getVideoTracks()[0].onended = () => {
-        if (recorder.state !== "inactive") recorder.stop();
+        if (recorder.state !== "inactive") {
+          recorder.stop();
+        }
       };
 
       recorder.start();
       mediaRecorderRef.current = recorder;
       setStatus("recording");
       setDuration(0);
+      durationRef.current = 0;
 
       // start the duration timer
       intervalRef.current = setInterval(() => {
-        setDuration((prev) => prev + 1);
+        durationRef.current += 1;
+        setDuration(durationRef.current);
       }, 1000);
     } catch (e) {
       // user probably hit cancel on the permission dialog — not really an error
@@ -107,7 +123,8 @@ export default function ScreenRecording({ userId }) {
     if (mediaRecorderRef.current?.state === "paused") {
       mediaRecorderRef.current.resume();
       intervalRef.current = setInterval(() => {
-        setDuration((prev) => prev + 1);
+        durationRef.current += 1;
+        setDuration(durationRef.current);
       }, 1000);
       setStatus("recording");
     }
@@ -117,6 +134,22 @@ export default function ScreenRecording({ userId }) {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stop();
     }
+  }
+
+  function clearDraft() {
+    setRecordingDraft((currentDraft) => {
+      if (draftUrlRef.current) {
+        URL.revokeObjectURL(draftUrlRef.current);
+        draftUrlRef.current = null;
+      }
+      return null;
+    });
+    setError("");
+  }
+
+  async function handleRetake() {
+    clearDraft();
+    await startRecording();
   }
 
   return (
@@ -132,7 +165,6 @@ export default function ScreenRecording({ userId }) {
           {status === "idle" && "Ready"}
           {status === "recording" && "Recording"}
           {status === "paused" && "Paused"}
-          {uploading && "Uploading..."}
         </div>
       </div>
 
@@ -140,7 +172,7 @@ export default function ScreenRecording({ userId }) {
 
       {/* controls */}
       <div className="timer-controls">
-        {status === "idle" && !uploading && (
+        {status === "idle" && !recordingDraft && (
           <button className="accent-btn lg" onClick={startRecording}>
             Start Recording
           </button>
@@ -148,44 +180,47 @@ export default function ScreenRecording({ userId }) {
         {status === "recording" && (
           <>
             <button className="secondary-btn lg" onClick={pauseRecording}>Pause</button>
-            <button className="danger-btn lg" onClick={stopRecording}>Stop & Save</button>
+            <button className="danger-btn lg" onClick={stopRecording}>Stop Recording</button>
           </>
         )}
         {status === "paused" && (
           <>
             <button className="accent-btn lg" onClick={resumeRecording}>Resume</button>
-            <button className="danger-btn lg" onClick={stopRecording}>Stop & Save</button>
+            <button className="danger-btn lg" onClick={stopRecording}>Stop Recording</button>
           </>
         )}
       </div>
 
-      {/* recordings list */}
-      {recordings.length > 0 && (
+      {recordingDraft && status === "idle" && (
         <div className="history-list">
-          <h3 className="section-title">Saved Recordings</h3>
-          {recordings.map((rec, i) => (
-            <div key={i} className="rec-item">
-              <div className="rec-item-meta">
-                <span className="hist-expr">
-                  {new Date(rec.timestamp).toLocaleDateString()} {new Date(rec.timestamp).toLocaleTimeString()}
-                </span>
-                <span className="hist-result">{fmt(rec.duration)}</span>
-              </div>
-              <a
-                className="rec-link"
-                href={rec.public_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Play / Download
-              </a>
+          <h3 className="section-title">Latest Recording</h3>
+          <div className="rec-item">
+            <div className="rec-item-meta">
+              <span className="hist-expr">
+                {new Date(recordingDraft.timestamp).toLocaleDateString()}{" "}
+                {new Date(recordingDraft.timestamp).toLocaleTimeString()}
+              </span>
+              <span className="hist-result">{fmt(recordingDraft.duration)}</span>
             </div>
-          ))}
+            <video className="rec-preview" controls src={recordingDraft.url} />
+            <div className="rec-actions">
+              <a
+                className="accent-btn"
+                href={recordingDraft.url}
+                download={recordingDraft.filename}
+              >
+                Download Recording
+              </a>
+              <button className="secondary-btn" onClick={() => void handleRetake()}>
+                Retake Video
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      {recordings.length === 0 && status === "idle" && (
-        <div className="empty-state">No recordings yet. Hit Start Recording!</div>
+      {!recordingDraft && status === "idle" && (
+        <div className="empty-state">No recording yet. Start one, then download it locally or retake it.</div>
       )}
     </div>
   );
