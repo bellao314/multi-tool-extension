@@ -18,6 +18,11 @@ export async function createThread(userId) {
     .single();
 
   if (error) throw error;
+  if (!data?.id) {
+    throw new Error(
+      "Chat thread creation succeeded but no thread id was returned. Check the chat_threads schema and RLS policies.",
+    );
+  }
   return data;
 }
 
@@ -48,6 +53,10 @@ export async function getMessages(threadId) {
 
 // persist a single message — role is "user" or "assistant"
 export async function saveMessage(threadId, role, content) {
+  if (!threadId) {
+    throw new Error("Cannot save a chat message without a valid thread id.");
+  }
+
   const { data, error } = await supabase.from(MESSAGES_TABLE).insert([
     {
       thread_id: threadId,

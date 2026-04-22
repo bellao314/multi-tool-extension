@@ -287,6 +287,10 @@ export default function Gemini({ userId }) {
         setActiveThreadId(threadId);
       }
 
+      if (!threadId) {
+        throw new Error("Gemini couldn't create a chat thread for this conversation.");
+      }
+
       await saveMessage(threadId, "user", trimmed);
 
       const outboundMessages = [];
