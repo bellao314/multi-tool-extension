@@ -261,6 +261,13 @@ export default function Gemini({ userId }) {
     await loadThreadMessages(threadId);
   }
 
+  function handleNewChat() {
+    setError("");
+    setActiveThreadId(null);
+    setMessages([]);
+    setPrompt("");
+  }
+
   async function handleSend(messageText) {
     const trimmed = messageText.trim();
 
@@ -346,6 +353,10 @@ export default function Gemini({ userId }) {
             <p className="section-title">Recent Chats</p>
           </div>
 
+          <button type="button" className="accent-btn" onClick={handleNewChat} disabled={isSending}>
+            New Chat
+          </button>
+
           {isLoadingThreads ? (
             <div className="empty-state">Loading chats...</div>
           ) : threads.length === 0 ? (
@@ -397,7 +408,7 @@ export default function Gemini({ userId }) {
               <div className="empty-state">Loading conversation...</div>
             ) : messages.length === 0 ? (
               <div className="gemini-empty-state">
-                Start a new chat or choose one from the sidebar to view its stored messages.
+                Start a new chat or choose one from chat history to view its stored messages.
               </div>
             ) : (
               messages.map((message) => (
