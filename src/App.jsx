@@ -45,7 +45,7 @@ const TABS = [
   {
     id: "record",
     label: "Screen Recorder",
-    subtitle: "Screen recordings with upload history",
+    subtitle: "Download or retake recordings locally",
   },
   {
     id: "gemini",
@@ -86,7 +86,7 @@ export default function App() {
       <main className="panel">
         {activeTab === "calc" && <Calculator userId={userId} />}
         {activeTab === "timer" && <Timer userId={userId} />}
-        {activeTab === "record" && <ScreenRecording userId={userId} />}
+        {activeTab === "record" && <ScreenRecording />}
         {activeTab === "gemini" && <Gemini userId={userId} />}
       </main>
     </div>

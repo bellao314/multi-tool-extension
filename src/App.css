@@ -904,6 +904,25 @@
 
 .rec-link:hover { text-decoration: underline; }
 
+.rec-preview {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #000;
+  max-height: 220px;
+}
+
+.rec-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rec-actions .accent-btn,
+.rec-actions .secondary-btn {
+  text-decoration: none;
+}
+
 /* ===== gemini chat ===== */
 
 .chat-panel {
