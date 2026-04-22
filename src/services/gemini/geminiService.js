@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "../lib/supabaseClient.js";
 
 const THREADS_TABLE = "chat_threads";
 const MESSAGES_TABLE = "chat_messages";
