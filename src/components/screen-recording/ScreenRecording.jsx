@@ -63,7 +63,7 @@ export default function ScreenRecording() {
         const finishedAt = new Date();
         const nextDraftUrl = URL.createObjectURL(blob);
 
-        setRecordingDraft((currentDraft) => {
+        setRecordingDraft(() => {
           if (draftUrlRef.current) {
             URL.revokeObjectURL(draftUrlRef.current);
           }
@@ -137,7 +137,7 @@ export default function ScreenRecording() {
   }
 
   function clearDraft() {
-    setRecordingDraft((currentDraft) => {
+    setRecordingDraft(() => {
       if (draftUrlRef.current) {
         URL.revokeObjectURL(draftUrlRef.current);
         draftUrlRef.current = null;
