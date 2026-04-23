@@ -16,7 +16,7 @@ Run `npm install`.
 
 Run `npm run build`.
 
-Go to (chrome://extensions)["chrome://extensions"].
+Go to [chrome://extensions](chrome://extensions).
 
 Turn on "Developer Mode".
 
